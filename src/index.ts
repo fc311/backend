@@ -2,16 +2,29 @@ import express from "express";
 import { createYoga } from "graphql-yoga";
 import { schema } from "./schema";
 
-const PORT = process.env.PORT || 4000;
+// 🔹 IMPORTANT: ensure seed runs on startup
+import "./seed/seed";
 
-const app = express();
+const PORT = Number(process.env.PORT) || 4000;
 
-const yoga = createYoga({
-  schema,
-});
+console.log("DATABASE_URL =", process.env.DATABASE_URL);
 
-app.use("/graphql", yoga);
+async function startServer() {
+  const app = express();
 
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
+  const yoga = createYoga({
+    schema,
+    graphqlEndpoint: "/graphql",
+  });
+
+  app.use("/graphql", yoga);
+
+  app.listen(PORT, "0.0.0.0", () => {
+    console.log(`🚀 Server running on port ${PORT}`);
+  });
+}
+
+startServer().catch((err) => {
+  console.error("❌ Failed to start server", err);
+  process.exit(1);
 });
