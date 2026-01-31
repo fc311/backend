@@ -36,15 +36,36 @@ export const resolvers = {
       const skip = (page - 1) * pageSize;
       const take = pageSize;
 
+      const where: any = {};
+
+      if (args.filter?.status) {
+        where.status = args.filter.status;
+      }
+
+      if (args.filter?.shipperName) {
+        where.shipperName = {
+          contains: args.filter.shipperName,
+          mode: "insensitive",
+        };
+      }
+
+      if (args.filter?.carrierName) {
+        where.carrierName = {
+          contains: args.filter.carrierName,
+          mode: "insensitive",
+        };
+      }
+
       const [items, totalCount] = await Promise.all([
         prisma.shipment.findMany({
+          where,
           skip,
           take,
           orderBy: {
             [sortFieldMap[sortBy]]: sortOrder.toLowerCase(),
           },
         }),
-        prisma.shipment.count(),
+        prisma.shipment.count({ where }),
       ]);
 
       const totalPages = Math.ceil(totalCount / pageSize);

@@ -43,6 +43,12 @@ export const schema = createSchema({
       order: SortOrder = DESC
     }
 
+    input ShipmentFilterInput {
+      status: String
+      shipperName: String
+      carrierName: String
+    }
+
     type PageInfo {
       page: Int!
       pageSize: Int!
@@ -63,6 +69,7 @@ export const schema = createSchema({
       shipments(
         pagination: PaginationInput
         sort: ShipmentSortInput
+        filter: ShipmentFilterInput
       ): ShipmentConnection!
 
       shipment(id: ID!): Shipment
