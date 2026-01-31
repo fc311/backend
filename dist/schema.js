@@ -18,10 +18,73 @@ exports.schema = (0, graphql_yoga_1.createSchema)({
       updatedAt: String!
     }
 
+    # --------------------
+    # Pagination & Sorting
+    # --------------------
+
+    enum SortOrder {
+      ASC
+      DESC
+    }
+
+    enum ShipmentSortBy {
+      CREATED_AT
+      UPDATED_AT
+      SHIPPER_NAME
+      RATE
+      STATUS
+    }
+
+    enum Role {
+      ADMIN
+      EMPLOYEE
+    }
+
+    input PaginationInput {
+      page: Int = 1
+      pageSize: Int = 10
+    }
+
+    input ShipmentSortInput {
+      by: ShipmentSortBy = CREATED_AT
+      order: SortOrder = DESC
+    }
+
+    input ShipmentFilterInput {
+      status: String
+      shipperName: String
+      carrierName: String
+    }
+
+    type PageInfo {
+      page: Int!
+      pageSize: Int!
+      totalCount: Int!
+      totalPages: Int!
+    }
+
+    type ShipmentConnection {
+      items: [Shipment!]!
+      pageInfo: PageInfo!
+    }
+
+    # --------
+    # Queries
+    # --------
+
     type Query {
-      shipments: [Shipment!]!
+      shipments(
+        pagination: PaginationInput
+        sort: ShipmentSortInput
+        filter: ShipmentFilterInput
+      ): ShipmentConnection!
+
       shipment(id: ID!): Shipment
     }
+
+    # ----------
+    # Mutations
+    # ----------
 
     type Mutation {
       addShipment(

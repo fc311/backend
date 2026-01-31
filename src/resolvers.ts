@@ -1,4 +1,5 @@
 import { prisma } from "./prisma";
+import { GraphQLError } from "graphql";
 
 type ShipmentSortBy =
   | "CREATED_AT"
@@ -19,7 +20,11 @@ const sortFieldMap: Record<ShipmentSortBy, string> = {
 
 function requireAdmin(role: "ADMIN" | "EMPLOYEE") {
   if (role !== "ADMIN") {
-    throw new Error("Not authorized: ADMIN role required");
+    throw new GraphQLError("Not authorized: ADMIN role required", {
+      extensions: {
+        code: "FORBIDDEN",
+      },
+    });
   }
 }
 

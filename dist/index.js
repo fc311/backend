@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const graphql_yoga_1 = require("graphql-yoga");
 const schema_1 = require("./schema");
+const context_1 = require("./context");
 // 🔹 IMPORTANT: ensure seed runs on startup
 require("./seed/seed");
 const PORT = Number(process.env.PORT) || 4000;
@@ -15,6 +16,7 @@ async function startServer() {
     const yoga = (0, graphql_yoga_1.createYoga)({
         schema: schema_1.schema,
         graphqlEndpoint: "/graphql",
+        context: context_1.createContext,
     });
     app.use("/graphql", yoga);
     app.listen(PORT, "0.0.0.0", () => {
