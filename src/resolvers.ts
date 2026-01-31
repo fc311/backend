@@ -17,6 +17,12 @@ const sortFieldMap: Record<ShipmentSortBy, string> = {
   STATUS: "status",
 } as const;
 
+function requireAdmin(role: "ADMIN" | "EMPLOYEE") {
+  if (role !== "ADMIN") {
+    throw new Error("Not authorized: ADMIN role required");
+  }
+}
+
 export const resolvers = {
   Query: {
     shipments: async (_: any, args: any) => {
@@ -86,15 +92,21 @@ export const resolvers = {
   },
 
   Mutation: {
-    addShipment: (_: any, args: any) => prisma.shipment.create({ data: args }),
+    addShipment: (_: any, args: any, ctx: any) => {
+      requireAdmin(ctx.role);
+      return prisma.shipment.create({ data: args });
+    },
 
-    updateShipment: (_: any, args: any) =>
-      prisma.shipment.update({
+    updateShipment: (_: any, args: any, ctx: any) => {
+      requireAdmin(ctx.role);
+
+      return prisma.shipment.update({
         where: { id: args.id },
         data: {
           status: args.status ?? undefined,
           rate: args.rate ?? undefined,
         },
-      }),
+      });
+    },
   },
 };

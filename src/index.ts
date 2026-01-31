@@ -1,6 +1,7 @@
 import express from "express";
 import { createYoga } from "graphql-yoga";
 import { schema } from "./schema";
+import { createContext } from "./context";
 
 // 🔹 IMPORTANT: ensure seed runs on startup
 import "./seed/seed";
@@ -15,6 +16,7 @@ async function startServer() {
   const yoga = createYoga({
     schema,
     graphqlEndpoint: "/graphql",
+    context: createContext,
   });
 
   app.use("/graphql", yoga);

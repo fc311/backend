@@ -1,7 +1,8 @@
 import { createSchema } from "graphql-yoga";
 import { resolvers } from "./resolvers";
+import type { Context } from "./context";
 
-export const schema = createSchema({
+export const schema = createSchema<Context>({
   typeDefs: `
     type Shipment {
       id: ID!
@@ -31,6 +32,11 @@ export const schema = createSchema({
       SHIPPER_NAME
       RATE
       STATUS
+    }
+
+    enum Role {
+      ADMIN
+      EMPLOYEE
     }
 
     input PaginationInput {
